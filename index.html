@@ -3,6 +3,10 @@
 <head>
   <title>WebSocket Client</title>
   <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: #191919;
+    }
     table {
       border-collapse: collapse;
       width: 100%;
@@ -19,13 +23,13 @@
     }
     
     tr:nth-child(even) {
-      background-color: #f2f2f2;
+      background-color: rgba(255, 255, 255, 0.133);
     }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <script>
-    const ws = new WebSocket('ws://localhost:3000');
+    const ws = new WebSocket('ws://arqui-production.up.railway.app:443');
     let airQualityChart;
     let temperatureChart;
     let pressureChart;
@@ -37,11 +41,7 @@
 
     ws.onmessage = function (event) {
       const data = JSON.parse(event.data);
-      console.log('Datos recibidos desde el servidor:');
-      console.log('Calidad del aire:', data.air_quality);
-      console.log('Temperatura:', data.temperature);
-      console.log('Presión:', data.pressure);
-      console.log('Altitud:', data.altitude);
+   
 
       // Actualizar las gráficas con los nuevos datos
       updateChart(airQualityChart, data.air_quality);
@@ -72,6 +72,16 @@
           ]
         },
         options: {
+          animations: {
+      tension: {
+        duration: 1000,
+        easing: 'linear',
+        from: 1,
+        to: 0,
+        loop: true
+      }
+    },
+
           responsive: true,
           maintainAspectRatio: false,
           scales: {
@@ -107,6 +117,7 @@
 </head>
 <body>
   <div id="air-quality-chart"></div>
+
   <div id="temperature-chart"></div>
   <div id="pressure-chart"></div>
   <div id="altitude-chart"></div>
