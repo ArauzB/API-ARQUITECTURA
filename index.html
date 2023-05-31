@@ -1,61 +1,50 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>WebSocket Client</title>
-  <style>
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      background-color: #191919;
-    }
-    table {
-      border-collapse: collapse;
-      width: 100%;
-    }
-    
-    th, td {
-      text-align: left;
-      padding: 8px;
-    }
-    
-    th {
-      background-color: #4CAF50;
-      color: white;
-    }
-    
-    tr:nth-child(even) {
-      background-color: rgba(255, 255, 255, 0.133);
-    }
-  </style>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+import { Component, OnInit } from '@angular/core';
+import { Chart, CategoryScale } from 'chart.js';
 
-  <script>
-    const ws = new WebSocket('ws://arqui-production.up.railway.app:443');
-    let airQualityChart;
-    let temperatureChart;
-    let pressureChart;
-    let altitudeChart;
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent implements OnInit {
+  airQualityChart!: Chart;
+  temperatureChart!: Chart;
+  pressureChart!: Chart;
+  altitudeChart!: Chart;
+  ws!: WebSocket;
+  maxDataPoints = 5;
 
-    ws.onopen = function () {
+  ngOnInit() {
+    this.ws = new WebSocket('ws://arqui-production.up.railway.app:443');
+    this.ws.onopen = () => {
       console.log('Conexión establecida con el servidor de WebSocket');
     };
 
-    ws.onmessage = function (event) {
+    this.ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
-   
 
       // Actualizar las gráficas con los nuevos datos
-      updateChart(airQualityChart, data.air_quality);
-      updateChart(temperatureChart, data.temperature);
-      updateChart(pressureChart, data.pressure);
-      updateChart(altitudeChart, data.altitude);
+      this.updateChart(this.airQualityChart, data.air_quality);
+      this.updateChart(this.temperatureChart, data.temperature);
+      this.updateChart(this.pressureChart, data.pressure);
+      this.updateChart(this.altitudeChart, data.altitude);
     };
 
-    function createChart(containerId, label, backgroundColor, borderColor) {
-      const container = document.getElementById(containerId);
-      const canvas = document.createElement('canvas');
-      container.appendChild(canvas);
+    this.airQualityChart = this.createChart('air-quality-chart', 'Calidad del aire (PPM)', 'rgba(0, 123, 255, 0.5)', 'rgba(0, 123, 255, 1)');
+    this.temperatureChart = this.createChart('temperature-chart', 'Temperatura (C)', 'rgba(255, 99, 132, 0.5)', 'rgba(255, 99, 132, 1)');
+    this.pressureChart = this.createChart('pressure-chart', 'Presión (hPa)', 'rgba(75, 192, 192, 0.5)', 'rgba(75, 192, 192, 1)');
+    this.altitudeChart = this.createChart('altitude-chart', 'Altura (M)', 'rgba(255, 205, 86, 0.5)', 'rgba(255, 205, 86, 1)');
+  }
 
-      const ctx = canvas.getContext('2d');
+  createChart(containerId: string, label: string, backgroundColor: string, borderColor: string): Chart {
+    const container = document.getElementById(containerId);
+    const canvas = document.createElement('canvas');
+    if (container) {
+      container.appendChild(canvas);
+    }
+
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
       const chart = new Chart(ctx, {
         type: 'line',
         data: {
@@ -73,15 +62,14 @@
         },
         options: {
           animations: {
-      tension: {
-        duration: 1000,
-        easing: 'linear',
-        from: 1,
-        to: 0,
-        loop: true
-      }
-    },
-
+            tension: {
+              duration: 1000,
+              easing: 'linear',
+              from: 1,
+              to: 0,
+              loop: true
+            }
+          },
           responsive: true,
           maintainAspectRatio: false,
           scales: {
@@ -95,31 +83,36 @@
           }
         }
       });
-
       return chart;
     }
 
-    function updateChart(chart, newData) {
-      chart.data.labels.push('');
-      chart.data.datasets[0].data.push(newData);
+    throw new Error('No se pudo obtener el contexto del lienzo (canvas context).');
+  }
+
+  updateChart(chart: Chart, newData: number) {
+    const data = chart.data;
+
+    if (data) {
+      // Agregar el nuevo dato
+      if (data.labels) {
+        data.labels.push('');
+      }
+      if (data.datasets[0].data) {
+        data.datasets[0].data.push(newData);
+      }
+
+      // Verificar si se alcanzó el límite de datos
+      if (data.labels && data.labels.length > this.maxDataPoints) {
+        // Eliminar el dato más antiguo
+        if (data.labels[0]) {
+          data.labels.shift();
+        }
+        if (data.datasets[0].data[0]) {
+          data.datasets[0].data.shift();
+        }
+      }
+
       chart.update();
     }
-
-    // Crear gráficas independientes
-    document.addEventListener('DOMContentLoaded', function () {
-      airQualityChart = createChart('air-quality-chart', 'Calidad del aire (PPM)', 'rgba(0, 123, 255, 0.5)', 'rgba(0, 123, 255, 1)');
-      temperatureChart = createChart('temperature-chart', 'Temperatura (C)', 'rgba(255, 99, 132, 0.5)', 'rgba(255, 99, 132, 1)');
-      pressureChart = createChart('pressure-chart', 'Presión (hPa)', 'rgba(75, 192, 192, 0.5)', 'rgba(75, 192, 192, 1)');
-      altitudeChart = createChart('altitude-chart', 'Altura (M)', 'rgba(255, 205, 86, 0.5)', 'rgba(255, 205, 86, 1)');
-    });
-
-  </script>
-</head>
-<body>
-  <div id="air-quality-chart"></div>
-
-  <div id="temperature-chart"></div>
-  <div id="pressure-chart"></div>
-  <div id="altitude-chart"></div>
-</body>
-</html>
+  }
+}
