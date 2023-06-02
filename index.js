@@ -29,7 +29,7 @@ app.post('/api/data', (req, res) => {
     if (error) {
       console.log(error);
     } else {
-      if(air_quality > 1000){
+      if(air_quality > 100000){
 
       try {
         const mail = await transporter.sendMail({
@@ -88,7 +88,7 @@ app.post('/api/data1', (req, res) => {
     if (error) {
       console.log(error);
     } else {
-      if(air_quality > 1000){
+      if(air_quality > 100000){
 
       try {
         const mail = await transporter.sendMail({
@@ -146,7 +146,7 @@ app.post('/api/data2', (req, res) => {
     if (error) {
       console.log(error);
     } else {
-      if(air_quality > 1000){
+      if(air_quality > 100000){
 
       try {
         const mail = await transporter.sendMail({
