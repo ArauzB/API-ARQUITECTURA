@@ -1,14 +1,17 @@
 const express = require('express');
 const http = require('http');
 const WebSocket = require('ws');
+const cors = require('cors');
 const {connection} = require('./services/conexionbd');
 const {transporter} = require('./services/nodemailer');
 
 const app = express();
+
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
 app.use(express.json());
+app.use(cors());
 
 
 app.post('/api/data', (req, res) => {
