@@ -29,7 +29,7 @@ app.post('/api/data', (req, res) => {
     if (error) {
       console.log(error);
     } else {
-      if(air_quality > 100000){
+      if(air_quality > 10000){
 
       try {
         const mail = await transporter.sendMail({
@@ -88,7 +88,7 @@ app.post('/api/data1', (req, res) => {
     if (error) {
       console.log(error);
     } else {
-      if(air_quality > 100000){
+      if(air_quality1 > 10000){
 
       try {
         const mail = await transporter.sendMail({
@@ -103,7 +103,7 @@ app.post('/api/data1', (req, res) => {
       }
       } 
       
-      if (temperature > 36){
+      if (temperature1 > 36){
         try {
           const mail = await transporter.sendMail({
             from: process.env.EMAIL,
@@ -146,7 +146,7 @@ app.post('/api/data2', (req, res) => {
     if (error) {
       console.log(error);
     } else {
-      if(air_quality > 100000){
+      if(air_quality2 > 10000){
 
       try {
         const mail = await transporter.sendMail({
@@ -161,7 +161,7 @@ app.post('/api/data2', (req, res) => {
       }
       } 
       
-      if (temperature > 36){
+      if (temperature2 > 36){
         try {
           const mail = await transporter.sendMail({
             from: process.env.EMAIL,
