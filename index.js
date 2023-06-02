@@ -202,6 +202,180 @@ app.post('/api/data3', (req, res) => {
   res.status(200).json({ message: 'Datos recibidos correctamente' });
 });
 
+app.get('/api/PPM', (req, res) => {
+  connection.query(`SELECT d.PPM_maximo, d.hora_PPM_maximo,
+  d.PPM_minimo, d.hora_PPM_minimo,
+  DATE(d.fecha_PPM) AS fecha_PPM, d.id_esp,
+  d.promedio_PPM
+FROM (
+SELECT t.id_esp, d1.PPM AS PPM_maximo, TIME(d1.fecha) AS hora_PPM_maximo,
+    d2.PPM AS PPM_minimo, TIME(d2.fecha) AS hora_PPM_minimo,
+    CASE WHEN d1.PPM = t.max_PPM THEN d1.fecha ELSE d2.fecha END AS fecha_PPM,
+    t.PPM_promedio AS promedio_PPM
+FROM (
+SELECT id_esp, MAX(PPM) AS max_PPM, MIN(PPM) AS min_PPM, AVG(PPM) AS PPM_promedio
+FROM datos
+WHERE DATE(fecha) = CURDATE() AND id_esp = 1
+GROUP BY id_esp
+) t
+INNER JOIN datos d1 ON d1.PPM = t.max_PPM AND d1.id_esp = t.id_esp
+INNER JOIN datos d2 ON d2.PPM = t.min_PPM AND d2.id_esp = t.id_esp
+LIMIT 1
+) d;
+`, (error, results) => {
+    if (error) {
+      console.log(error);
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+app.get('/api/PPM1', (req, res) => {
+  connection.query(`SELECT d.PPM_maximo, d.hora_PPM_maximo,
+  d.PPM_minimo, d.hora_PPM_minimo,
+  DATE(d.fecha_PPM) AS fecha_PPM, d.id_esp,
+  d.promedio_PPM
+FROM (
+SELECT t.id_esp, d1.PPM AS PPM_maximo, TIME(d1.fecha) AS hora_PPM_maximo,
+    d2.PPM AS PPM_minimo, TIME(d2.fecha) AS hora_PPM_minimo,
+    CASE WHEN d1.PPM = t.max_PPM THEN d1.fecha ELSE d2.fecha END AS fecha_PPM,
+    t.PPM_promedio AS promedio_PPM
+FROM (
+SELECT id_esp, MAX(PPM) AS max_PPM, MIN(PPM) AS min_PPM, AVG(PPM) AS PPM_promedio
+FROM datos
+WHERE DATE(fecha) = CURDATE() AND id_esp = 2
+GROUP BY id_esp
+) t
+INNER JOIN datos d1 ON d1.PPM = t.max_PPM AND d1.id_esp = t.id_esp
+INNER JOIN datos d2 ON d2.PPM = t.min_PPM AND d2.id_esp = t.id_esp
+LIMIT 1
+) d;
+`, (error, results) => {
+    if (error) {
+      console.log(error);
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+app.get('/api/PPM2', (req, res) => {
+  connection.query(`SELECT d.PPM_maximo, d.hora_PPM_maximo,
+  d.PPM_minimo, d.hora_PPM_minimo,
+  DATE(d.fecha_PPM) AS fecha_PPM, d.id_esp,
+  d.promedio_PPM
+FROM (
+SELECT t.id_esp, d1.PPM AS PPM_maximo, TIME(d1.fecha) AS hora_PPM_maximo,
+    d2.PPM AS PPM_minimo, TIME(d2.fecha) AS hora_PPM_minimo,
+    CASE WHEN d1.PPM = t.max_PPM THEN d1.fecha ELSE d2.fecha END AS fecha_PPM,
+    t.PPM_promedio AS promedio_PPM
+FROM (
+SELECT id_esp, MAX(PPM) AS max_PPM, MIN(PPM) AS min_PPM, AVG(PPM) AS PPM_promedio
+FROM datos
+WHERE DATE(fecha) = CURDATE() AND id_esp = 3
+GROUP BY id_esp
+) t
+INNER JOIN datos d1 ON d1.PPM = t.max_PPM AND d1.id_esp = t.id_esp
+INNER JOIN datos d2 ON d2.PPM = t.min_PPM AND d2.id_esp = t.id_esp
+LIMIT 1
+) d;
+`, (error, results) => {
+    if (error) {
+      console.log(error);
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+app.get('/api/C', (req, res) => {
+  connection.query(`
+  SELECT d.temperatura_maxima, d.hora_temperatura_maxima,
+       d.temperatura_minima, d.hora_temperatura_minima,
+       DATE(d.fecha_temperatura) AS fecha_temperatura, d.id_esp, d.promedio_temperatura
+FROM (
+  SELECT t.id_esp, d1.C AS temperatura_maxima, TIME(d1.fecha) AS hora_temperatura_maxima,
+         d2.C AS temperatura_minima, TIME(d2.fecha) AS hora_temperatura_minima,
+         CASE WHEN d1.C = t.max_temp THEN d1.fecha ELSE d2.fecha END AS fecha_temperatura,
+         t.promedio_temperatura
+  FROM (
+    SELECT id_esp, MAX(C) AS max_temp, MIN(C) AS min_temp, AVG(C) AS promedio_temperatura
+    FROM datos
+    WHERE DATE(fecha) = CURDATE() AND id_esp = 1
+    GROUP BY id_esp
+  ) t
+  INNER JOIN datos d1 ON d1.C = t.max_temp AND d1.id_esp = t.id_esp
+  INNER JOIN datos d2 ON d2.C = t.min_temp AND d2.id_esp = t.id_esp
+  LIMIT 1
+) d;
+`, (error, results) => {
+    if (error) {
+      console.log(error);
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+app.get('/api/C1', (req, res) => {
+  connection.query(`
+  SELECT d.temperatura_maxima, d.hora_temperatura_maxima,
+  d.temperatura_minima, d.hora_temperatura_minima,
+  DATE(d.fecha_temperatura) AS fecha_temperatura, d.id_esp, d.promedio_temperatura
+FROM (
+SELECT t.id_esp, d1.C AS temperatura_maxima, TIME(d1.fecha) AS hora_temperatura_maxima,
+    d2.C AS temperatura_minima, TIME(d2.fecha) AS hora_temperatura_minima,
+    CASE WHEN d1.C = t.max_temp THEN d1.fecha ELSE d2.fecha END AS fecha_temperatura,
+    t.promedio_temperatura
+FROM (
+SELECT id_esp, MAX(C) AS max_temp, MIN(C) AS min_temp, AVG(C) AS promedio_temperatura
+FROM datos
+WHERE DATE(fecha) = CURDATE() AND id_esp = 2
+GROUP BY id_esp
+) t
+INNER JOIN datos d1 ON d1.C = t.max_temp AND d1.id_esp = t.id_esp
+INNER JOIN datos d2 ON d2.C = t.min_temp AND d2.id_esp = t.id_esp
+LIMIT 1
+) d;
+`, (error, results) => {
+    if (error) {
+      console.log(error);
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+app.get('/api/C2', (req, res) => {
+  connection.query(`
+  SELECT d.temperatura_maxima, d.hora_temperatura_maxima,
+       d.temperatura_minima, d.hora_temperatura_minima,
+       DATE(d.fecha_temperatura) AS fecha_temperatura, d.id_esp, d.promedio_temperatura
+FROM (
+  SELECT t.id_esp, d1.C AS temperatura_maxima, TIME(d1.fecha) AS hora_temperatura_maxima,
+         d2.C AS temperatura_minima, TIME(d2.fecha) AS hora_temperatura_minima,
+         CASE WHEN d1.C = t.max_temp THEN d1.fecha ELSE d2.fecha END AS fecha_temperatura,
+         t.promedio_temperatura
+  FROM (
+    SELECT id_esp, MAX(C) AS max_temp, MIN(C) AS min_temp, AVG(C) AS promedio_temperatura
+    FROM datos
+    WHERE DATE(fecha) = CURDATE() AND id_esp = 3
+    GROUP BY id_esp
+  ) t
+  INNER JOIN datos d1 ON d1.C = t.max_temp AND d1.id_esp = t.id_esp
+  INNER JOIN datos d2 ON d2.C = t.min_temp AND d2.id_esp = t.id_esp
+  LIMIT 1
+) d;
+`, (error, results) => {
+    if (error) {
+      console.log(error);
+    } else {
+      res.json(results);
+    }
+  });
+});
+
   wss.on('connection', (ws) => {
     console.log('Nuevo cliente conectado');
   
