@@ -1,6 +1,8 @@
 const express = require('express');
 const http = require('http');
 const WebSocket = require('ws');
+const {connection} = require('./services/conexionbd');
+const {transporter} = require('./services/nodemailer');
 
 const app = express();
 const server = http.createServer(app);
@@ -11,6 +13,9 @@ app.use(express.json());
 
 app.post('/api/data', (req, res) => {
   const { air_quality, temperature, pressure, altitude } = req.body;
+  const id_esp = 1;
+  const date = new Date();
+  const email = "arauz220678@gmail.com";
 
   const data = JSON.stringify({ air_quality, temperature, pressure, altitude });
   // Emitir los datos recibidos a través de WebSocket
@@ -20,11 +25,44 @@ app.post('/api/data', (req, res) => {
     }
   });
 
-  console.log('Datos recibidos:');
-  console.log('Calidad del aire:', air_quality);
-  console.log('Temperatura:', temperature);
-  console.log('Presión:', pressure);
-  console.log('Altitud:', altitude);
+  connection.query('INSERT INTO datos SET ?', { id_esp:id_esp, PPM:air_quality, C:temperature, hPa:pressure, m:altitude, fecha:date },  async (error, results) => {
+    if (error) {
+      console.log(error);
+    } else {
+      if(air_quality > 1000){
+
+      try {
+        const mail = await transporter.sendMail({
+          from: process.env.EMAIL,
+          to: email,
+          subject: "Alerta de calidad de aire",
+          html: `<h1>La calidad del aire es de ${air_quality} PPM</h1>`
+        });
+        console.log("Email enviado");
+      } catch (error) {
+        console.log(error);
+      }
+      } 
+      
+      if (temperature > 36){
+        try {
+          const mail = await transporter.sendMail({
+            from: process.env.EMAIL,
+            to: email,
+            subject: "Alerta de temperatura",
+            html: `<h1>La temperatura es de ${temperature} °C</h1>`
+          });
+          console.log("Email enviado");
+        } catch (error) {
+          console.log(error);
+        }
+
+      }
+      
+      }
+  });
+
+
 
   // Responder al ESP32 con un mensaje de éxito
   res.status(200).json({ message: 'Datos recibidos correctamente' });
@@ -32,6 +70,9 @@ app.post('/api/data', (req, res) => {
 
 app.post('/api/data1', (req, res) => {
   const { air_quality1, temperature1, pressure1, altitude1 } = req.body;
+  const id_esp = 2;
+  const date = new Date();
+  const email = "arauz220678@gmail.com";
 
   const data1 = JSON.stringify({ air_quality1, temperature1, pressure1, altitude1 });
 
@@ -42,11 +83,43 @@ app.post('/api/data1', (req, res) => {
     }
   });
 
-  console.log('Datos recibidos ruta 2:');
-  console.log('Calidad del aire:', air_quality1);
-  console.log('Temperatura:', temperature1);
-  console.log('Presión:', pressure1);
-  console.log('Altitud:', altitude1);
+
+  connection.query('INSERT INTO datos SET ?', { id_esp:id_esp, PPM:air_quality1, C:temperature1, hPa:pressure1, m:altitude1, fecha:date },  async (error, results) => {
+    if (error) {
+      console.log(error);
+    } else {
+      if(air_quality > 1000){
+
+      try {
+        const mail = await transporter.sendMail({
+          from: process.env.EMAIL,
+          to: email,
+          subject: "Alerta de calidad de aire",
+          html: `<h1>La calidad del aire es de ${air_quality1} PPM</h1>`
+        });
+        console.log("Email enviado");
+      } catch (error) {
+        console.log(error);
+      }
+      } 
+      
+      if (temperature > 36){
+        try {
+          const mail = await transporter.sendMail({
+            from: process.env.EMAIL,
+            to: email,
+            subject: "Alerta de temperatura",
+            html: `<h1>La temperatura es de ${temperature1} °C</h1>`
+          });
+          console.log("Email enviado");
+        } catch (error) {
+          console.log(error);
+        }
+
+      }
+      
+      }
+  });
 
   // Responder al ESP32 con un mensaje de éxito
   res.status(200).json({ message: 'Datos recibidos correctamente' });
@@ -54,6 +127,9 @@ app.post('/api/data1', (req, res) => {
 
 app.post('/api/data2', (req, res) => {
   const { air_quality2, temperature2, pressure2, altitude2 } = req.body;
+  const id_esp = 3;
+  const date = new Date();
+  const email = "arauz220678@gmail.com";
 
   const data2 = JSON.stringify({ air_quality2, temperature2, pressure2, altitude2 });
 
@@ -65,11 +141,43 @@ app.post('/api/data2', (req, res) => {
     }
   });
 
-  console.log('Datos recibidos:');
-  console.log('Calidad del aire:', air_quality2);
-  console.log('Temperatura:', temperature2);
-  console.log('Presión:', pressure2);
-  console.log('Altitud:', altitude2);
+
+  connection.query('INSERT INTO datos SET ?', { id_esp:id_esp, PPM:air_quality2, C:temperature2, hPa:pressure2, m:altitude2, fecha:date },  async (error, results) => {
+    if (error) {
+      console.log(error);
+    } else {
+      if(air_quality > 1000){
+
+      try {
+        const mail = await transporter.sendMail({
+          from: process.env.EMAIL,
+          to: email,
+          subject: "Alerta de calidad de aire",
+          html: `<h1>La calidad del aire es de ${air_quality2} PPM</h1>`
+        });
+        console.log("Email enviado");
+      } catch (error) {
+        console.log(error);
+      }
+      } 
+      
+      if (temperature > 36){
+        try {
+          const mail = await transporter.sendMail({
+            from: process.env.EMAIL,
+            to: email,
+            subject: "Alerta de temperatura",
+            html: `<h1>La temperatura es de ${temperature2} °C</h1>`
+          });
+          console.log("Email enviado");
+        } catch (error) {
+          console.log(error);
+        }
+
+      }
+      
+      }
+  });
 
   // Responder al ESP32 con un mensaje de éxito
   res.status(200).json({ message: 'Datos recibidos correctamente' });
@@ -93,8 +201,6 @@ app.post('/api/data3', (req, res) => {
   // Responder al ESP32 con un mensaje de éxito
   res.status(200).json({ message: 'Datos recibidos correctamente' });
 });
-
-
 
   wss.on('connection', (ws) => {
     console.log('Nuevo cliente conectado');
@@ -167,7 +273,6 @@ app.post('/api/data3', (req, res) => {
     console.log('Cliente desconectado');
   });
 });
-
 
 const port = process.env.PORT || 3000; 
   server.listen(port, () => {
