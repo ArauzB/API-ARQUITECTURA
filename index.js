@@ -187,9 +187,9 @@ app.post('/api/data2', (req, res) => {
 });
 
 app.post('/api/data3', (req, res) => {
-  const {altura,tiempo,velocidad} = req.body;
+  const {altura,tiempo,velocidad,capacidad} = req.body;
 
-  const data3 = JSON.stringify({altura,tiempo,velocidad});
+  const data3 = JSON.stringify({altura,tiempo,velocidad, capacidad});
 
   // Emitir los datos recibidos a través de WebSocket
   wss.clients.forEach((client) => {
