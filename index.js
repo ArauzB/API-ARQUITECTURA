@@ -187,9 +187,9 @@ app.post('/api/data2', (req, res) => {
 });
 
 app.post('/api/data3', (req, res) => {
-  const {altura} = req.body;
+  const {altura,tiempo,velocidad} = req.body;
 
-  const data3 = JSON.stringify({altura});
+  const data3 = JSON.stringify({altura,tiempo,velocidad});
 
   // Emitir los datos recibidos a través de WebSocket
   wss.clients.forEach((client) => {
@@ -198,8 +198,6 @@ app.post('/api/data3', (req, res) => {
     }
   });
 
-  console.log('Datos recibidos:');
-  console.log('Altura:', altura);
 
   // Responder al ESP32 con un mensaje de éxito
   res.status(200).json({ message: 'Datos recibidos correctamente' });
